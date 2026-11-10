@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jules Bayer — Data & Digital Analytics</title>
+<meta name="description" content="Jules Bayer, consultant senior Data & Digital Analytics à Paris. GA4, GTM server-side, Piano Analytics, BigQuery, Consent Mode.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#000; --bg-2:#0a0a0a; --card:#101010; --line:#1f1f1f; --line-2:#2a2a2a;
+    --ink:#fafafa; --ink-2:#a1a1aa; --ink-3:#71717a; --accent:#0062FF;
+    --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+    --r:16px; --r-sm:10px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+  [data-lang="fr"] .en{display:none !important}
+  [data-lang="en"] .fr{display:none !important}
+
+  h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.02em;line-height:1.1}
+  h2{font-size:40px;margin-bottom:12px}
+  h3{font-size:17px;letter-spacing:-.01em;line-height:1.3}
+  p{margin:0 0 14px;max-width:60ch;color:var(--ink-2)}
+  .view>p.lead,.sub{font-size:17px;color:var(--ink-2);max-width:56ch;margin-bottom:48px}
+
+  /* layout */
+  .site{min-height:100vh;display:flex;flex-direction:column}
+  .site>main{flex:1;display:flex}
+  .in{max-width:1120px;width:100%;margin:0 auto;padding:0 32px}
+  .top{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .top .in{height:64px;display:flex;align-items:center;gap:28px}
+  .brand{font-weight:600;font-size:15px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .brand a{text-decoration:none}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ink)}
+  .brand small{display:none}
+  .top nav{margin-left:8px}
+  nav ul{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+  nav a{text-decoration:none;font-size:14px;color:var(--ink-2);padding:6px 10px;border-radius:999px}
+  nav a:hover{color:var(--ink);background:var(--bg-2)}
+  nav a[aria-current]{color:var(--ink);background:#141414}
+  .top .lang{margin-left:auto}
+  .lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg-2)}
+  .lang button{font:inherit;font-size:12px;font-weight:600;border:0;background:transparent;padding:5px 11px;border-radius:999px;cursor:pointer;color:var(--ink-2)}
+  .lang button[aria-pressed="true"]{background:var(--ink);color:#000}
+  .burger{display:none;background:none;border:1px solid var(--line);color:var(--ink);font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer}
+  .rail-foot{display:none}
+
+  .view{display:none;max-width:1120px;width:100%;margin:0 auto;padding:88px 32px 120px}
+  .view.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.view.on{animation:none}}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;text-decoration:none;font-weight:500;font-size:14px;padding:10px 18px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink);background:transparent;transition:background .15s,border-color .15s}
+  .btn:hover{border-color:#3a3a3a;background:var(--bg-2)}
+  .btn.primary{background:var(--ink);color:#000;border-color:var(--ink)}
+  .btn.primary:hover{background:#e4e4e7;border-color:#e4e4e7}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+  /* hero (home) */
+  .hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:24px}
+  .hero h1{font-size:clamp(40px,6vw,72px);max-width:16ch;margin-bottom:18px}
+  .hero .lede{font-size:18px;max-width:52ch;margin:0 auto 32px;color:var(--ink-2)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin-bottom:28px;background:var(--bg-2)}
+  .eyebrow i{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block}
+
+  /* arrival cascade (first visit only) */
+  .intro .hero .eyebrow,.intro .hero h1,.intro .hero .lede,.intro .hero .cta,.intro .hero .product{opacity:0;transform:translateY(14px);animation:cascade .6s cubic-bezier(.2,.7,.2,1) forwards}
+  .intro .hero .product{transform:translateY(24px) scale(.985)}
+  .intro .hero .eyebrow{animation-delay:.05s}.intro .hero h1{animation-delay:.15s}.intro .hero .lede{animation-delay:.28s}.intro .hero .cta{animation-delay:.38s}.intro .hero .product{animation-delay:.5s}
+  @keyframes cascade{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.intro .hero *{animation:none !important;opacity:1 !important;transform:none !important}}
+  /* product card = dataLayer console + metric tiles */
+  .product{margin:64px auto 0;width:100%;max-width:960px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;text-align:left;box-shadow:0 0 0 1px rgba(255,255,255,.02),0 40px 80px -40px rgba(0,98,255,.25)}
+  .product .head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink-3)}
+  .product .head b{color:var(--ink-2);font-weight:500}
+  .product .head .pill{margin-left:auto;border:1px solid var(--line-2);border-radius:999px;padding:2px 9px;color:#22c55e}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line);margin:0;padding:0;background:transparent}
+  .fact{padding:18px 20px;border-right:1px solid var(--line)}
+  .fact:last-child{border-right:0}
+  .fact b{display:block;font-size:28px;font-weight:500;letter-spacing:-.02em;line-height:1.1;margin-bottom:4px;font-family:var(--font)}
+  .fact span{font-size:12.5px;color:var(--ink-3)}
+  .console{margin:0;background:transparent;border:0;border-radius:0;padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:#d4d4d8}
+  .console .bar{display:none}
+  .console .line{white-space:pre-wrap;word-break:break-word;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+  .console .line.on{opacity:1;transform:none}
+  .console .k{color:#7dd3fc}.console .s{color:#e4e4e7}.console .n{color:#fbbf24}.console .c{color:#52525b}
+  @media (prefers-reduced-motion:reduce){.console .line{opacity:1;transform:none;transition:none}}
+
+  .feed{padding:8px 20px 14px}
+  .row{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:baseline}
+  .row:last-child{border-bottom:0}
+  .lab{color:var(--ink-3);font-size:12.5px}
+  .val{color:var(--ink);min-height:1.4em}
+  .val .caret::after{content:"";display:inline-block;width:2px;height:1em;background:var(--ink);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+  @media (max-width:860px){.row{grid-template-columns:1fr;gap:2px}}
+  /* generic cards & grids */
+  .skills,.projects{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .skill,.proj{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:10px}
+  .skill p,.proj p{font-size:14px;margin:0}
+  .proj.feat{grid-column:1/-1;background:linear-gradient(180deg,#0e0e0e,#0a0a0a)}
+  .proj .stack{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-top:auto;padding-top:8px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:4px 0 0;padding:0}
+  .tags li{font-size:12px;font-weight:500;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--ink-2);background:#000}
+  .tags li.hi{border-color:#3a3a3a;color:var(--ink);background:#141414}
+
+  /* work timeline as list rows */
+  .work{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg-2)}
+  .job{display:grid;grid-template-columns:170px 1fr;gap:20px;padding:24px;border-bottom:1px solid var(--line)}
+  .job:last-child{border-bottom:0}
+  .job time{font-size:13px;color:var(--ink-3);padding-top:3px}
+  .job .org{color:var(--ink-3);font-weight:400}
+  .job ul{margin:10px 0 0;padding-left:16px;color:var(--ink-2);font-size:14px}
+  .job li{margin-bottom:5px;max-width:62ch}
+
+  /* contact */
+  .contact p{font-size:20px;color:var(--ink);max-width:40ch}
+  .links{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+  .links li a{display:inline-flex;text-decoration:none;font-size:14px;padding:10px 16px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink)}
+  .links li a:hover{background:var(--bg-2)}
+
+  .todo{border:1px dashed #3f3f46;color:#a1a1aa;padding:1px 6px;border-radius:6px;font-size:.9em}
+
+  /* footer */
+  .foot{border-top:1px solid var(--line);background:#000}
+  .foot .in{padding:40px 32px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px;font-size:13px;color:var(--ink-3)}
+  .foot h4{margin:0 0 10px;font-size:12px;font-weight:500;color:var(--ink-2)}
+  .foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .foot a{color:var(--ink-3);text-decoration:none}
+  .foot a:hover{color:var(--ink)}
+  .foot .brand{margin-bottom:8px;color:var(--ink)}
+  .foot .copy{grid-column:1/-1;border-top:1px solid var(--line);padding-top:18px;margin-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media (max-width:860px){
+    .top .in{gap:12px}
+    .burger{display:block;margin-left:auto}
+    .top nav{display:none;width:100%;order:4;padding-bottom:12px}
+    .top nav.open{display:block}
+    .top nav ul{flex-direction:column;gap:2px}
+    .top .lang{margin-left:0;order:3}
+    .top .in{height:auto;min-height:64px;flex-wrap:wrap;padding-top:12px;padding-bottom:0}
+    .view{padding:56px 20px 80px}
+    h2{font-size:32px}
+    .skills,.projects{grid-template-columns:1fr}
+    .proj.feat{grid-column:auto}
+    .facts{grid-template-columns:1fr}
+    .fact{border-right:0;border-bottom:1px solid var(--line)}
+    .job{grid-template-columns:1fr;gap:6px}
+    .foot .in{grid-template-columns:1fr 1fr}
+  }
+</style>
+
+</head>
+<body>
+<div class="site">
+  <header class="top">
+    <div class="in">
+      <div class="brand"><span class="dot"></span><a href="#home">Jules Bayer</a></div>
+      <button class="burger" type="button" aria-label="Menu" aria-expanded="false">Menu</button>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="#home"><span class="fr">Accueil</span><span class="en">Home</span></a></li>
+          <li><a href="#about"><span class="fr">À propos</span><span class="en">About</span></a></li>
+          <li><a href="#expertises"><span class="fr">Expertises</span><span class="en">Expertise</span></a></li>
+          <li><a href="#parcours"><span class="fr">Parcours</span><span class="en">Experience</span></a></li>
+          <li><a href="#realisations"><span class="fr">Réalisations</span><span class="en">Work</span></a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="lang" role="group" aria-label="Langue / Language">
+        <button type="button" data-set="fr" aria-pressed="true">FR</button>
+        <button type="button" data-set="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="view hero-view" id="home">
+      <div class="hero">
+        <span class="eyebrow"><i></i><span class="fr">Disponible pour un poste annonceur · Paris</span><span class="en">Open to in-house roles · Paris</span></span>
+        <h1 class="fr">Je mesure ce qui compte, proprement.</h1>
+        <h1 class="en">I measure what matters, cleanly.</h1>
+        <p class="lede fr">Consultant senior en data & digital analytics. Je conçois des dispositifs de collecte fiables — GA4, GTM server-side, Piano — et je transforme les données en décisions pour les équipes marketing et produit.</p>
+        <p class="lede en">Senior data & digital analytics consultant. I build reliable measurement setups — GA4, server-side GTM, Piano — and turn the data into decisions for marketing and product teams.</p>
+        <div class="cta">
+          <a class="btn primary" href="#contact"><span class="fr">Me contacter</span><span class="en">Get in touch</span></a>
+          <a class="btn" href="#realisations"><span class="fr">Voir les réalisations</span><span class="en">See the work</span></a>
+        </div>
+        <div class="product">
+          <div class="head"><b class="fr">Profil</b><b class="en">Profile</b><span class="fr">mis à jour novembre 2026</span><span class="en">updated November 2026</span><span class="pill"><span class="fr">disponible</span><span class="en">available</span></span></div>
+          <div class="facts">
+        <div class="fact"><b>2+</b><span class="fr">années en data & digital analytics</span><span class="en">years in data & digital analytics</span></div>
+        <div class="fact"><b>10+</b><span class="fr">comptes annonceurs accompagnés <span class="todo">à ajuster</span></span><span class="en">advertiser accounts supported <span class="todo">adjust</span></span></div>
+        <div class="fact"><b>2026</b><span class="fr">finaliste Piano Partner Awards</span><span class="en">Piano Partner Awards finalist</span></div>
+      </div>
+          <div class="feed" aria-label="Profil">
+            <div class="row"><span class="lab"><span class="fr">Poste</span><span class="en">Role</span></span><span class="val"><span class="fr">Consultant senior Data & Digital Analytics · Havas Business Science, Paris</span><span class="en">Senior Data & Digital Analytics Consultant · Havas Business Science, Paris</span></span></div>
+            <div class="row"><span class="lab"><span class="fr">Ce que je fais</span><span class="en">What I do</span></span><span class="val"><span class="fr">Je mets en place la mesure des sites et campagnes, et je la rends fiable</span><span class="en">I set up website and campaign measurement, and make it reliable</span></span></div>
+            <div class="row"><span class="lab"><span class="fr">Outils</span><span class="en">Tools</span></span><span class="val"><span class="fr">Google Analytics 4, Google Tag Manager (client et serveur), Piano Analytics, BigQuery, Looker Studio</span><span class="en">Google Analytics 4, Google Tag Manager (client and server), Piano Analytics, BigQuery, Looker Studio</span></span></div>
+            <div class="row"><span class="lab"><span class="fr">Conformité</span><span class="en">Compliance</span></span><span class="val"><span class="fr">Gestion du consentement (RGPD) avec OneTrust, Didomi, Axeptio</span><span class="en">Consent management (GDPR) with OneTrust, Didomi, Axeptio</span></span></div>
+            <div class="row"><span class="lab"><span class="fr">Secteurs</span><span class="en">Sectors</span></span><span class="val"><span class="fr">Retail, finance, automobile, transport, service public</span><span class="en">Retail, finance, automotive, transport, public services</span></span></div>
+            <div class="row"><span class="lab"><span class="fr">Recherche</span><span class="en">Looking for</span></span><span class="val"><span class="fr">Un poste data côté annonceur — sport, finance ou tech</span><span class="en">An in-house data role — sports, finance or tech</span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="view" id="about">
+      <h2 class="fr">À propos</h2><h2 class="en">About</h2>
+      <p class="fr">Je travaille chez Havas Business Science à Paris, où j'accompagne des annonceurs grands comptes sur toute la chaîne de mesure : plan de marquage, implémentation GTM client et server-side, conformité consentement, modélisation BigQuery et restitution Looker Studio.</p>
+      <p class="en">I work at Havas Business Science in Paris, supporting large advertisers across the whole measurement chain: tracking plans, client- and server-side GTM implementation, consent compliance, BigQuery modelling and Looker Studio reporting.</p>
+      <p class="fr">Ce qui m'anime : rendre une donnée marketing assez fiable pour qu'on puisse prendre une décision dessus — et le prouver, par exemple avec des tests d'incrémentalité plutôt que des corrélations.</p>
+      <p class="en">What drives me: making marketing data trustworthy enough to act on — and proving it, with incrementality tests rather than correlations.</p>
+      <p class="fr">Je cherche aujourd'hui à rejoindre une équipe data côté annonceur, idéalement dans le sport, la finance ou la tech.</p>
+      <p class="en">I'm now looking to join an in-house data team, ideally in sports, finance or tech.</p>
+      
+    </section>
+    <section class="view" id="expertises">
+      <h2 class="fr">Expertises</h2><h2 class="en">Expertise</h2>
+      <div class="skills">
+        <div class="skill">
+          <h3 class="fr">Collecte & tagging</h3><h3 class="en">Collection & tagging</h3>
+          <p class="fr">Plans de marquage, dataLayer, conteneurs multi-pays, infrastructure server-side sur GCP ou Addingwell, Google Tag Gateway.</p>
+          <p class="en">Tracking plans, dataLayer design, multi-country containers, server-side infrastructure on GCP or Addingwell, Google Tag Gateway.</p>
+          <ul class="tags"><li>GTM</li><li class="hi">GTM server-side</li><li>Tag Gateway</li><li>Cloudflare</li><li>Addingwell</li></ul>
+        </div>
+        <div class="skill">
+          <h3 class="fr">Consentement & conformité</h3><h3 class="en">Consent & compliance</h3>
+          <p class="fr">Consent Mode v2, audits de conformité, intégration CMP, données hachées pour les plateformes médias.</p>
+          <p class="en">Consent Mode v2, compliance audits, CMP integration, hashed first-party data for media platforms.</p>
+          <ul class="tags"><li class="hi">Consent Mode v2</li><li>OneTrust</li><li>Didomi</li><li>Axeptio</li><li>Enhanced Conversions</li></ul>
+        </div>
+        <div class="skill">
+          <h3 class="fr">Analyse & modélisation</h3><h3 class="en">Analysis & modelling</h3>
+          <p class="fr">Exports GA4 vers BigQuery, SQL, transformations dbt, scripts Python, mesure d'impact par tests d'incrémentalité.</p>
+          <p class="en">GA4 to BigQuery exports, SQL, dbt transformations, Python scripts, impact measurement through incrementality tests.</p>
+          <ul class="tags"><li>GA4 360</li><li>Piano Analytics</li><li class="hi">BigQuery</li><li>SQL</li><li>Python</li><li>dbt</li><li>CausalImpact</li></ul>
+        </div>
+        <div class="skill">
+          <h3 class="fr">Restitution & pilotage</h3><h3 class="en">Reporting & steering</h3>
+          <p class="fr">Dashboards Looker Studio nationaux et régionaux, suivi d'usage GA4 360, recommandations aux équipes marketing et dev.</p>
+          <p class="en">National and regional Looker Studio dashboards, GA4 360 usage monitoring, recommendations to marketing and dev teams.</p>
+          <ul class="tags"><li>Looker Studio</li><li>Google Sheets</li><li>GCP</li><li>Google Ads</li><li>Meta / TikTok / Snap</li></ul>
+        </div>
+      </div>
+    </section>
+    <section class="view" id="parcours">
+      <h2 class="fr">Parcours</h2><h2 class="en">Experience</h2>
+      <div class="work">
+        <article class="job">
+          <time><span class="todo">2024</span> — <span class="fr">aujourd'hui</span><span class="en">present</span></time>
+          <div>
+            <h3><span class="fr">Consultant senior Data & Digital Analytics</span><span class="en">Senior Data & Digital Analytics Consultant</span> <span class="org">· Havas Business Science, Paris</span></h3>
+            <ul>
+              <li class="fr">Pilotage de la mesure pour des annonceurs du retail, de la finance, de l'automobile, du transport et du service public.</li>
+              <li class="en">Measurement lead for advertisers in retail, finance, automotive, transport and public services.</li>
+              <li class="fr">Déploiement de GTM server-side sur GCP et Google Tag Gateway sur Cloudflare ; rédaction de guidelines dataLayer pour les équipes de développement.</li>
+              <li class="en">Deployed server-side GTM on GCP and Google Tag Gateway on Cloudflare; wrote dataLayer guidelines for development teams.</li>
+              <li class="fr">Audits tracking et Consent Mode, avec un outillage d'audit automatisé (Playwright + agent IA) développé en interne.</li>
+              <li class="en">Tracking and Consent Mode audits, with in-house automated audit tooling (Playwright + AI agent).</li>
+              <li class="fr">Projet Piano Analytics finaliste aux Piano Partner Awards 2026.</li>
+              <li class="en">Piano Analytics project shortlisted at the Piano Partner Awards 2026.</li>
+            </ul>
+          </div>
+        </article>
+        <article class="job">
+          <time><span class="todo">20XX — 20XX</span></time>
+          <div>
+            <h3><span class="fr">Consultant Data & Digital Analytics</span><span class="en">Data & Digital Analytics Consultant</span> <span class="org">· Havas Business Science</span></h3>
+            <ul>
+              <li class="fr">Implémentation GA4 et GTM, plans de marquage, entonnoirs et dimensions personnalisées. <span class="todo">à compléter</span></li>
+              <li class="en">GA4 and GTM implementation, tracking plans, funnels and custom dimensions. <span class="todo">to complete</span></li>
+            </ul>
+          </div>
+        </article>
+        <article class="job">
+          <time><span class="todo">20XX — 20XX</span></time>
+          <div>
+            <h3><span class="fr">Double MSc Intelligence artificielle pour la transformation des entreprises</span><span class="en">Double MSc in AI for Business Transformation</span> <span class="org">· SKEMA Business School & ESIEA</span></h3>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="view" id="realisations">
+      <h2 class="fr">Réalisations</h2><h2 class="en">Selected work</h2>
+      <div class="projects">
+        <article class="proj feat">
+          <h3 class="fr">Mesure vidéo et parcours sur un groupe de services public — finaliste Piano Partner Awards 2026</h3>
+          <h3 class="en">Video and journey measurement for a public-services group — Piano Partner Awards 2026 finalist</h3>
+          <p class="fr">Refonte du dispositif Piano Analytics, tracking vidéo YouTube et api.video dans AV Insights, dashboards Looker Studio national et par région.</p>
+          <p class="en">Piano Analytics overhaul, YouTube and api.video tracking in AV Insights, national and regional Looker Studio dashboards.</p>
+          <div class="stack">Piano Analytics · AV Insights · Looker Studio</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Portail B2B d'un constructeur automobile</h3>
+          <h3 class="en">B2B portal for a car manufacturer</h3>
+          <p class="fr">Guidelines dataLayer pour les développeurs, GTM server-side sur GCP, Google Tag Gateway sur Cloudflare.</p>
+          <p class="en">dataLayer guidelines for developers, server-side GTM on GCP, Google Tag Gateway on Cloudflare.</p>
+          <div class="stack">GTM · sGTM · GCP · Cloudflare</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Gestionnaire d'actifs européen, 4 pays</h3>
+          <h3 class="en">European asset manager, 4 countries</h3>
+          <p class="fr">Conteneurs GTM par marché, Consent Mode, Google Ads et pixels médias harmonisés entre .fr, .de, .co.uk et .it.</p>
+          <p class="en">Per-market GTM containers, Consent Mode, Google Ads and media pixels harmonised across .fr, .de, .co.uk and .it.</p>
+          <div class="stack">GTM · Consent Mode v2 · Google Ads</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Transporteur ferroviaire low-cost</h3>
+          <h3 class="en">Low-cost rail operator</h3>
+          <p class="fr">Audit de la couverture des données hachées (email, téléphone) sur l'événement d'achat pour Meta, Google Ads, TikTok et Snap.</p>
+          <p class="en">Audit of hashed-data coverage (email, phone) on the purchase event for Meta, Google Ads, TikTok and Snap.</p>
+          <div class="stack">Enhanced Conversions · CAPI · GTM</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Agent d'audit tracking & Consent Mode</h3>
+          <h3 class="en">Tracking & Consent Mode audit agent</h3>
+          <p class="fr">Outil interne : collecteur Playwright qui capture les hits par état de consentement, analyse et rapport générés par un agent IA.</p>
+          <p class="en">Internal tool: a Playwright collector capturing hits per consent state, with analysis and reporting generated by an AI agent.</p>
+          <div class="stack">Playwright · Python · Claude</div>
+        </article>
+      </div>
+    </section>
+    <section class="view" id="contact">
+      <h2>Contact</h2>
+      <p class="fr">Un poste, une question sur une implémentation, un échange sur la mesure ? Écrivez-moi.</p>
+      <p class="en">A role, a question about an implementation, or just a chat about measurement? Write to me.</p>
+      <ul class="links">
+        <li><a href="mailto:prenom@exemple.com"><span class="todo">prenom@exemple.com</span></a></li>
+        <li><a href="https://www.linkedin.com/in/" target="_blank" rel="noopener">LinkedIn <span class="todo">/in/ton-profil</span></a></li>
+        <li><a href="https://github.com/" target="_blank" rel="noopener">GitHub <span class="todo">optionnel</span></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="in">
+      <div>
+        <div class="brand"><span class="dot"></span>Jules Bayer</div>
+        <p class="fr" style="font-size:13px;max-width:34ch">Data & digital analytics — collecte, consentement, modélisation et restitution.</p>
+        <p class="en" style="font-size:13px;max-width:34ch">Data & digital analytics — collection, consent, modelling and reporting.</p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="#about"><span class="fr">À propos</span><span class="en">About</span></a></li>
+          <li><a href="#expertises"><span class="fr">Expertises</span><span class="en">Expertise</span></a></li>
+          <li><a href="#parcours"><span class="fr">Parcours</span><span class="en">Experience</span></a></li>
+          <li><a href="#realisations"><span class="fr">Réalisations</span><span class="en">Work</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#contact">Email</a></li>
+          <li><a href="https://www.linkedin.com/in/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="CV_Jules_Bayer.pdf">CV (PDF)</a></li>
+        </ul>
+      </div>
+      <div class="copy"><span>© 2026 Jules Bayer · Paris</span><span class="fr">Site statique, mesuré avec GTM + Consent Mode v2</span><span class="en">Static site, measured with GTM + Consent Mode v2</span></div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // Language switch
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll('.lang button');
+  function setLang(l){
+    root.dataset.lang = l; root.lang = l;
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === l)));
+    try { localStorage.setItem('lang', l); } catch(e){}
+  }
+  buttons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
+  let saved = null;
+  try { saved = localStorage.getItem('lang'); } catch(e){}
+  if (!saved) saved = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
+  setLang(saved);
+
+  // Page routing on hash
+  const views = document.querySelectorAll('.view');
+  const links = document.querySelectorAll('.top nav a');
+  const nav = document.querySelector('.top nav');
+  const burger = document.querySelector('.burger');
+  const ids = [...views].map(v => v.id);
+  function show(){
+    let id = location.hash.replace('#','');
+    if (!ids.includes(id)) id = 'home';
+    views.forEach(v => v.classList.toggle('on', v.id === id));
+    links.forEach(a => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + id));
+    nav.classList.remove('open'); burger.setAttribute('aria-expanded','false');
+    window.scrollTo({top:0, behavior:'auto'});
+    if (id === 'home') revealConsole();
+  }
+  burger.addEventListener('click', () => {
+    const open = nav.classList.toggle('open'); burger.setAttribute('aria-expanded', String(open));
+  });
+  window.addEventListener('hashchange', show);
+
+  // Arrival animation (once per visit): typewriter on the profile rows + count-up on the tiles
+  let revealed = false;
+  function revealConsole(){
+    if (revealed) return; revealed = true;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.body.classList.add('intro');
+    const vals = [...document.querySelectorAll('.feed .val > span')];
+    vals.forEach(sp => { sp.dataset.t = sp.textContent; if (!reduce) sp.textContent = ''; });
+    if (!reduce) {
+      let t = 1000;
+      document.querySelectorAll('.feed .row').forEach(row => {
+        const spans = row.querySelectorAll('.val > span');
+        const len = Math.max(...[...spans].map(x => x.dataset.t.length));
+        const dur = Math.min(1100, len * 14);
+        setTimeout(() => {
+          spans.forEach(sp => sp.classList.add('caret'));
+          const start = performance.now();
+          const step = now => {
+            const p = Math.min(1, (now - start) / dur);
+            spans.forEach(sp => sp.textContent = sp.dataset.t.slice(0, Math.floor(sp.dataset.t.length * p)));
+            if (p < 1) requestAnimationFrame(step); else spans.forEach(sp => sp.classList.remove('caret'));
+          };
+          requestAnimationFrame(step);
+        }, t);
+        t += dur + 140;
+      });
+      document.querySelectorAll('.fact b').forEach(b => {
+        const target = b.textContent.trim(); const num = parseInt(target.replace(/\D/g,''),10); const suffix = target.replace(/[0-9]/g,'');
+        if (isNaN(num)) return;
+        b.textContent = '0'+suffix;
+        setTimeout(() => {
+          const start = performance.now(), dur = 1200;
+          const step = now => { const p = Math.min(1,(now-start)/dur); const e = 1-Math.pow(1-p,3); b.textContent = Math.round(num*e)+suffix; if (p<1) requestAnimationFrame(step); };
+          requestAnimationFrame(step);
+        }, 700);
+      });
+    }
+  }
+  show();
+</script>
+</body>
+</html>

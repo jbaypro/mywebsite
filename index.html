@@ -126,7 +126,7 @@
   h3.sub{font-size:20px;font-weight:500;margin:48px 0 16px}
   .langs{margin-top:20px;font-size:14px}
   /* page backgrounds */
-  .site>main{position:relative}
+  .site>main{position:relative;overflow-x:clip}
   .site>main>.view{position:relative;z-index:1}
   #flow{position:absolute;left:0;top:0;width:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s ease}
   body[data-page="home"] #flow{opacity:1}
@@ -143,11 +143,9 @@
 
   /* about: white paint burst */
   .about-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-  .splash{position:relative;aspect-ratio:1;width:100%;max-width:480px;justify-self:end;background:#000;filter:contrast(28);isolation:isolate}
-  .splash canvas{width:100%;height:100%;display:block;filter:blur(7px)}
-  .mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(56px,9vw,104px);font-weight:600;letter-spacing:-.04em;color:#000;opacity:0;transition:opacity .6s ease .55s;pointer-events:none}
-  .mono.on{opacity:1}
-  .splash-wrap{position:relative;justify-self:end;width:100%;max-width:480px}
+  .splash{position:relative;aspect-ratio:1;width:100%}
+  .splash canvas{position:absolute;left:-22%;top:-22%;width:144%;height:144%;display:block}
+  .splash-wrap{position:relative;justify-self:end;width:100%;max-width:460px;margin-top:48px}
   @media (max-width:860px){.about-grid{grid-template-columns:1fr;gap:24px}.splash-wrap{justify-self:center;max-width:320px;order:-1}}
   /* contact */
   .contact p{font-size:20px;color:var(--ink);max-width:40ch}
@@ -254,7 +252,6 @@
         </div>
         <div class="splash-wrap" aria-hidden="true">
           <div class="splash"><canvas id="paint"></canvas></div>
-          <div class="mono">JB</div>
         </div>
       </div>
     </section>
@@ -526,58 +523,78 @@
     };
   })();
 
-  // ---------- About: white paint burst ----------
+  // ---------- About: white powder explosion (Holi style) ----------
   const Paint = (() => {
-    const cv = document.getElementById('paint'), ctx = cv.getContext('2d'), mono = document.querySelector('.mono');
+    const cv = document.getElementById('paint'), ctx = cv.getContext('2d');
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let S=0, raf=null, shape=null;
-    function rnd(a,b){ return a + Math.random()*(b-a); }
-    function make(){
-      const arms = Array.from({length: 13}, (_,i) => {
-        const ang = i/13*Math.PI*2 + rnd(-.18,.18);
-        return { ang, len: rnd(.27,.37), w: rnd(.035,.06), drop: rnd(.016,.028), gap: rnd(.02,.05) };
-      });
-      const drops = Array.from({length: 46}, () => ({ ang: rnd(0,Math.PI*2), dist: rnd(.22,.42), r: rnd(.004,.014), delay: rnd(0,.25) }));
-      const lobes = Array.from({length: 7}, () => ({ ang: rnd(0,Math.PI*2), r: rnd(.06,.11), d: rnd(.08,.15) }));
-      return {arms, drops, lobes};
-    }
-    function size(){ const r = cv.getBoundingClientRect(), DPR = Math.min(2, devicePixelRatio||1); S = r.width; cv.width = cv.height = S*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
-    const ease = t => 1 - Math.pow(1 - Math.max(0, Math.min(1, t)), 4);
-    function frame(t){
-      const c = S/2, k = S;
-      ctx.clearRect(0,0,S,S); ctx.fillStyle = '#fff';
-      const e = ease(Math.min(1,t));
-      // core + lobes
-      ctx.beginPath(); ctx.arc(c,c, k*.17*e, 0, 7); ctx.fill();
-      for (const l of shape.lobes){ ctx.beginPath(); ctx.arc(c+Math.cos(l.ang)*k*l.d*e, c+Math.sin(l.ang)*k*l.d*e, k*l.r*e, 0, 7); ctx.fill(); }
-      // arms: tapered chain of circles + detached droplet
-      for (const a of shape.arms){
-        const len = a.len*e, steps = 18;
-        for (let i=0;i<=steps;i++){
-          const f = i/steps, d = k*len*f, r = k*a.w*(1-f*.82)*Math.min(1,e*1.4);
-          ctx.beginPath(); ctx.arc(c+Math.cos(a.ang)*d, c+Math.sin(a.ang)*d, Math.max(.5,r), 0, 7); ctx.fill();
+    let S = 0, DPR = 1, raf = null, layers = null;
+    const R = (a, b) => a + Math.random() * (b - a);
+    const gauss = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    function mk() { const c = document.createElement('canvas'); c.width = c.height = Math.round(S * DPR); const x = c.getContext('2d'); x.setTransform(DPR, 0, 0, DPR, 0, 0); return [c, x]; }
+    function puff(x, cx, cy, r, a) { const g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, `rgba(255,255,255,${a})`); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); }
+    function build() {
+      const c = S / 2, unit = S / 3.05;
+      const L = [mk(), mk(), mk()];                 // 0 core, 1 plumes, 2 tips
+      L.forEach(([, x]) => x.globalCompositeOperation = 'lighter');
+      const grain = (x, px, py, r, a) => { x.fillStyle = `rgba(255,255,255,${a})`; x.fillRect(px - r / 2, py - r / 2, r, r); };
+      // plumes
+      const nRays = 18;
+      for (let i = 0; i < nRays; i++) {
+        const ang = i / nRays * Math.PI * 2 + R(-.16, .16);
+        const len = unit * R(.62, 1.08), width = unit * R(.045, .1);
+        const subs = Array.from({ length: 3 }, () => ({ da: R(-.06, .06), off: R(-.5, .5) * width, k: R(.6, 1.1), l: R(.75, 1) }));
+        for (const sb of subs) {
+          const a2 = ang + sb.da, cos = Math.cos(a2), sin = Math.sin(a2), ll = len * sb.l;
+          const n = Math.round(ll / unit * 1700);
+          // soft body
+          for (let j = 0; j < 22; j++) {
+            const f = Math.random(), d = ll * f, lat = gauss() * width * .4 * (.3 + f);
+            puff(L[1][1], c + cos * d - sin * (lat + sb.off * f), c + sin * d + cos * (lat + sb.off * f), width * (.5 + f * 1.3) * sb.k, .045);
+          }
+          // grains
+          for (let j = 0; j < n; j++) {
+            const f = Math.pow(Math.random(), .85), d = ll * f;
+            const lat = gauss() * width * (.22 + f * .85) * sb.k + sb.off * f;
+            const px = c + cos * d - sin * lat, py = c + sin * d + cos * lat;
+            grain(f > .82 ? L[2][1] : L[1][1], px, py, R(.6, 1.7), R(.08, .32) * (1 - f * .5));
+          }
+          // spray: specks flung past the tip along a thin line
+          for (let k = 0, m = Math.round(R(6, 16)); k < m; k++) {
+            const d = ll * R(1, 1.38), lat = gauss() * width * .35;
+            const x = L[2][1]; x.fillStyle = `rgba(255,255,255,${R(.45, .95)})`;
+            x.beginPath(); x.arc(c + cos * d - sin * lat, c + sin * d + cos * lat, R(.6, 2.2), 0, 7); x.fill();
+          }
         }
-        const dd = k*(len + a.gap*e);
-        ctx.beginPath(); ctx.arc(c+Math.cos(a.ang)*dd, c+Math.sin(a.ang)*dd, k*a.drop*e, 0, 7); ctx.fill();
       }
-      // flying droplets
-      for (const d of shape.drops){
-        const p = ease(Math.max(0, Math.min(1, (t - d.delay) / (1 - d.delay))));
-        if (p <= 0) continue;
-        ctx.beginPath(); ctx.arc(c+Math.cos(d.ang)*k*d.dist*p, c+Math.sin(d.ang)*k*d.dist*p, k*d.r, 0, 7); ctx.fill();
-      }
+      // core: bright cloud
+      const cx = L[0][1];
+      puff(cx, c, c, unit * .38, .5); puff(cx, c, c, unit * .2, .55);
+      for (let j = 0; j < 9000; j++) { const rr = Math.abs(gauss()) * unit * .17, a = R(0, Math.PI * 2); grain(cx, c + Math.cos(a) * rr, c + Math.sin(a) * rr, R(.6, 1.8), R(.1, .35)); }
+      // loose dust
+      for (let j = 0; j < 1400; j++) { const rr = unit * Math.pow(Math.random(), .55) * 1.2, a = R(0, Math.PI * 2); grain(L[2][1], c + Math.cos(a) * rr, c + Math.sin(a) * rr, R(.4, 1.1), R(.04, .16)); }
+      layers = L.map(([el]) => el);
+    }
+    function size() { const r = cv.getBoundingClientRect(); DPR = Math.min(2, devicePixelRatio || 1); S = r.width; cv.width = cv.height = Math.round(S * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); }
+    const expo = t => { t = Math.max(0, Math.min(1, t)); return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); };
+    function frame(t) {
+      const c = S / 2;
+      ctx.clearRect(0, 0, S, S);
+      [[0, 0, .1], [1, .04, .12], [2, .1, .05]].forEach(([i, delay, from]) => {
+        const e = expo((t - delay) / (1 - delay)); if (e <= 0) return;
+        const sc = from + (1 - from) * e;
+        ctx.save(); ctx.globalAlpha = Math.min(1, e * 1.8); ctx.translate(c, c); ctx.scale(sc, sc); ctx.drawImage(layers[i], -c, -c, S, S); ctx.restore();
+      });
     }
     return {
-      burst(){
+      burst() {
         requestAnimationFrame(() => {
           size(); if (!S) return;
-          shape = make(); mono.classList.remove('on');
+          build();
           if (raf) cancelAnimationFrame(raf);
-          if (reduce){ frame(1); mono.classList.add('on'); return; }
-          const t0 = performance.now(), dur = 900;
-          const step = now => { const t = Math.max(0, (now - t0)/dur); frame(t); if (t < 1) raf = requestAnimationFrame(step); else raf = null; };
+          if (reduce) { frame(1); return; }
+          const t0 = performance.now(), dur = 1400;
+          const step = now => { const t = Math.max(0, (now - t0) / dur); frame(t); raf = t < 1 ? requestAnimationFrame(step) : null; };
           raf = requestAnimationFrame(step);
-          setTimeout(() => mono.classList.add('on'), 50);
         });
       }
     };

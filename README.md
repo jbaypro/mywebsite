@@ -47,3 +47,14 @@ Brancher la CMP via GTM avec Consent Mode v2 (defaults `denied`). Ne pas poser d
 | `index.html` | Le site complet : HTML, CSS, JS, textes FR et EN |
 | `.nojekyll` | Indique à GitHub Pages de servir les fichiers tels quels (sans traitement Jekyll) |
 | `README.md` | Cette notice |
+
+## Consentement et tracking (en place)
+
+- **CMP** : tarteaucitron 1.37.0, auto-hébergé dans `tarteaucitron/` (licence MIT, fichier `LICENSE`). Seuls les fichiers utiles sont embarqués : script minifié, services, langues FR/EN, CSS.
+- **Ordre dans le `<head>`** : 0) `gtag('consent','default', …)` tout « denied » → 1) tarteaucitron (`googleConsentMode: true`, service `gcmanalyticsstorage`) → 2) GTM `GTM-PG57T4KN`. Ne pas changer cet ordre.
+- **Mise à jour du consentement** : « Tout accepter » → `consent update {analytics_storage: 'granted'}` ; « Tout refuser » → reste `denied`. Lien « Gestion des cookies » dans le footer pour rouvrir le panneau.
+- **Événements dataLayer** poussés par le site :
+  - `virtual_page_view` (`page_id`, `page_location`, `page_title`) à chaque changement de page du menu (pas au premier chargement : le page_view GA4 le couvre) ;
+  - `language_switch` (`language`) ;
+  - `contact_click` (`contact_method` : email / linkedin / github, `link_location` : footer / contact_page). L'adresse email n'est jamais envoyée.
+- Pour ajouter un service plus tard (Clarity, Hotjar…) : ajouter son fichier de service si besoin et `tarteaucitron.job.push('<service>')`.

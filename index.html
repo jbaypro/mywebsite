@@ -1,6 +1,68 @@
 <!DOCTYPE html>
 <html lang="fr" data-lang="fr">
 <head>
+<!-- 0. Google Consent Mode v2 : valeurs par défaut posées en tout premier, avant GTM et tarteaucitron -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 800
+  });
+</script>
+<!-- 1. Consentement : tarteaucitron 1.37.0 (auto-hébergé) avec Google Consent Mode v2.
+     Doit rester AVANT GTM : init() pose le consentement par défaut (tout « denied »). -->
+<script>
+  var tarteaucitronForceLanguage = (function () {
+    try { var l = localStorage.getItem('lang'); if (l === 'fr' || l === 'en') return l; } catch (e) {}
+    return (navigator.language || 'fr').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en';
+  })();
+</script>
+<script src="tarteaucitron/tarteaucitron.min.js"></script>
+<script>
+  tarteaucitron.init({
+    "privacyUrl": "",
+    "bodyPosition": "bottom",
+    "hashtag": "#tarteaucitron",
+    "cookieName": "tarteaucitron",
+    "orientation": "bottom",
+    "groupServices": false,
+    "showDetailsOnClick": true,
+    "serviceDefaultState": "wait",
+    "showAlertSmall": false,
+    "cookieslist": false,
+    "closePopup": false,
+    "showIcon": false,
+    "adblocker": false,
+    "DenyAllCta": true,
+    "AcceptAllCta": true,
+    "highPrivacy": true,
+    "alwaysNeedConsent": false,
+    "handleBrowserDNTRequest": false,
+    "removeCredit": false,
+    "moreInfoLink": true,
+    "useExternalCss": false,
+    "useExternalJs": false,
+    "mandatory": true,
+    "mandatoryCta": false,
+    "googleConsentMode": true,
+    "bingConsentMode": false,
+    "softConsentMode": false,
+    "partnersList": false
+  });
+  (tarteaucitron.job = tarteaucitron.job || []).push('gcmanalyticsstorage');
+</script>
+<!-- 2. Google Tag Manager -->
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PG57T4KN"></script>
+<script>
+  gtag('js', new Date());
+</script>
+<!-- End Google Tag Manager -->
 <meta charset="utf-8">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -147,6 +209,16 @@
   .splash canvas{position:absolute;left:-22%;top:-22%;width:144%;height:144%;display:block}
   .splash-wrap{position:relative;justify-self:end;width:100%;max-width:460px;margin-top:48px}
   @media (max-width:860px){.about-grid{grid-template-columns:1fr;gap:24px}.splash-wrap{justify-self:center;max-width:320px;order:-1}}
+  /* cookie banner (tarteaucitron) */
+  #tarteaucitronRoot #tarteaucitronAlertBig{background:#0a0a0a !important;border-top:1px solid #1f1f1f !important;color:#a1a1aa !important;font-family:var(--font) !important;font-size:14px !important;padding:18px 24px !important;box-shadow:0 -20px 40px rgba(0,0,0,.6) !important}
+  #tarteaucitronRoot #tarteaucitronAlertBig #tarteaucitronDisclaimerAlert{color:#a1a1aa !important;font-family:var(--font) !important;font-size:14px !important}
+  #tarteaucitronRoot #tarteaucitronAlertBig button{font-family:var(--font) !important;font-size:13px !important;border-radius:999px !important;padding:8px 16px !important;margin:6px 4px 0 !important}
+  #tarteaucitronRoot #tarteaucitronPersonalize2{background:#fafafa !important;color:#000 !important}
+  #tarteaucitronRoot #tarteaucitronAllDenied2{background:transparent !important;color:#fafafa !important;border:1px solid #2a2a2a !important}
+  #tarteaucitronRoot #tarteaucitronCloseAlert{background:transparent !important;color:#a1a1aa !important;border:1px solid #2a2a2a !important}
+  #tarteaucitronRoot span[aria-hidden="true"].tarteaucitronCheck::before,#tarteaucitronRoot span[aria-hidden="true"].tarteaucitronCross::before{color:inherit}
+  .cookie-link{background:none;border:0;padding:0;font:inherit;color:var(--ink-3);cursor:pointer}
+  .cookie-link:hover{color:var(--ink)}
   /* contact */
   .contact p{font-size:20px;color:var(--ink);max-width:40ch}
   .links{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
@@ -450,7 +522,7 @@
           <li><a href="https://github.com/jbaypro" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
       </div>
-      <div class="copy"><span>© 2026 Jules Bayer · Paris</span><span class="fr">Site statique hébergé sur GitHub Pages</span><span class="en">Static site hosted on GitHub Pages</span></div>
+      <div class="copy"><span>© 2026 Jules Bayer · Paris · <button type="button" class="cookie-link" onclick="tarteaucitron.userInterface.openPanel()"><span class="fr">Gestion des cookies</span><span class="en">Cookie settings</span></button></span><span class="fr">Site statique hébergé sur GitHub Pages</span><span class="en">Static site hosted on GitHub Pages</span></div>
     </div>
   </footer>
 </div>
@@ -464,7 +536,11 @@
     buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === l)));
     try { localStorage.setItem('lang', l); } catch(e){}
   }
-  buttons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
+  buttons.forEach(b => b.addEventListener('click', () => {
+    setLang(b.dataset.set);
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ event: 'language_switch', language: b.dataset.set });
+  }));
   let saved = null;
   try { saved = localStorage.getItem('lang'); } catch(e){}
   if (!saved) saved = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
@@ -600,12 +676,25 @@
     };
   })();
 
+  // Contact clicks (method only, never the address itself)
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href]'); if (!a) return;
+    const h = a.getAttribute('href');
+    const method = h.startsWith('mailto:') ? 'email' : h.includes('linkedin.com') ? 'linkedin' : h.includes('github.com') ? 'github' : null;
+    if (!method) return;
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ event: 'contact_click', contact_method: method, link_location: a.closest('footer') ? 'footer' : 'contact_page' });
+  });
+
   // Page routing on hash
   const views = document.querySelectorAll('.view');
   const links = document.querySelectorAll('.top nav a');
   const nav = document.querySelector('.top nav');
   const burger = document.querySelector('.burger');
   const ids = [...views].map(v => v.id);
+  let firstShow = true;
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.addEventListener('load', () => setTimeout(() => window.scrollTo(0, 0), 0));
   function show(){
     let id = location.hash.replace('#','');
     if (!ids.includes(id)) id = 'home';
@@ -614,6 +703,8 @@
     nav.classList.remove('open'); burger.setAttribute('aria-expanded','false');
     window.scrollTo({top:0, behavior:'auto'});
     document.body.dataset.page = id;
+    if (firstShow) { firstShow = false; } else
+    dataLayer.push({ event: 'virtual_page_view', page_id: id, page_location: location.origin + location.pathname + '#' + id, page_title: 'Jules Bayer · ' + id });
     if (id === 'home') { revealConsole(); Flow.start(); } else Flow.stop();
     if (id === 'about') Paint.burst();
   }

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 0. Google Consent Mode v2 : valeurs par défaut, en tout premier -->
+<script src="assets/consent-default.js"></script>
+<!-- 1. CMP tarteaucitron (auto-hébergée) + service ga4consent -->
+<script src="tarteaucitron/tarteaucitron.min.js"></script>
+<script src="assets/cmp.js"></script>
+<!-- 2. Google Tag Manager -->
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PG57T4KN"></script>
+<script>
+  gtag('js', new Date());
+</script>
+<!-- End Google Tag Manager -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="bingbot" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<title>Réalisations — Data &amp; Digital Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="realisations" data-title-fr="Réalisations — Data &amp; Digital Analytics" data-title-en="Work — Data &amp; Digital Analytics">
+<div class="site">
+<header class="top">
+    <div class="in">
+      <div class="brand"><span class="dot"></span><a href="index.html">Data &amp; Digital Analytics</a></div>
+      <button class="burger" type="button" aria-label="Menu" aria-expanded="false">Menu</button>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="index.html"><span class="fr">Accueil</span><span class="en">Home</span></a></li>
+          <li><a href="about.html"><span class="fr">À propos</span><span class="en">About</span></a></li>
+          <li><a href="expertise.html"><span class="fr">Expertises</span><span class="en">Expertise</span></a></li>
+          <li><a href="experience.html"><span class="fr">Parcours</span><span class="en">Experience</span></a></li>
+          <li><a href="work.html" aria-current="page"><span class="fr">Réalisations</span><span class="en">Work</span></a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="lang" role="group" aria-label="Langue / Language">
+        <button type="button" data-set="fr" aria-pressed="true">FR</button>
+        <button type="button" data-set="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="view on" id="realisations">
+      <h2 class="fr">Réalisations</h2><h2 class="en">Selected work</h2>
+      <div class="projects">
+        <article class="proj feat">
+          <h3 class="fr">Constructeur automobile — taggage et tracking d'un site en 22 langues</h3>
+          <h3 class="en">Car manufacturer — tagging and tracking a site in 22 languages</h3>
+          <p class="fr">Un seul plan de taggage et un dataLayer commun déployés sur les 22 versions linguistiques du site, pour que chaque marché remonte les mêmes données.</p>
+          <p class="en">One tagging plan and a shared dataLayer rolled out across the site's 22 language versions, so every market reports the same data.</p>
+          <div class="stack">GTM · GA4 · dataLayer</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Enseigne d'ameublement — migration CAPI Meta et TikTok</h3>
+          <h3 class="en">Home furnishing retailer — Meta and TikTok CAPI migration</h3>
+          <p class="fr">Passage du suivi des conversions des pixels navigateur aux API de conversion Meta et TikTok, pour une remontée des ventes plus fiable vers les plateformes médias.</p>
+          <p class="en">Moved conversion tracking from browser pixels to the Meta and TikTok conversion APIs, for more reliable sales data in the ad platforms.</p>
+          <div class="stack">Meta CAPI · TikTok Events API · GTM server-side</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">E-commerce de boissons — tracking server-side en un temps record</h3>
+          <h3 class="en">Drinks e-commerce — server-side tracking in record time</h3>
+          <p class="fr">Mise en place du tracking server-side sur Addingwell en très peu de temps, grâce à un processus d'automatisation en Apps Script qui accélère la configuration GTM.</p>
+          <p class="en">Server-side tracking set up on Addingwell in very little time, thanks to an Apps Script automation process that speeds up GTM configuration.</p>
+          <div class="stack">Addingwell · GTM server-side · Apps Script</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Groupe logistique — Piano Analytics exempté de consentement</h3>
+          <h3 class="en">Logistics group — consent-exempt Piano Analytics</h3>
+          <p class="fr">Configuration de Piano Analytics en mode exempté, conforme aux critères de la CNIL, pour mesurer l'audience sans dépendre du taux d'acceptation des cookies.</p>
+          <p class="en">Piano Analytics configured in exempt mode, in line with CNIL criteria, to measure audience without depending on cookie consent rates.</p>
+          <div class="stack">Piano Analytics · CMP · RGPD</div>
+        </article>
+        <article class="proj">
+          <h3 class="fr">Pipeline BigQuery de nettoyage avant dashboard</h3>
+          <h3 class="en">BigQuery cleaning pipeline ahead of dashboards</h3>
+          <p class="fr">Pipeline SQL dans BigQuery qui nettoie et structure les données brutes avant leur restitution dans Looker Studio, pour des dashboards fiables.</p>
+          <p class="en">SQL pipeline in BigQuery that cleans and structures raw data before it reaches Looker Studio, so dashboards can be trusted.</p>
+          <div class="stack">BigQuery · SQL · Looker Studio</div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="in">
+      <div>
+        <div class="brand"><span class="dot"></span>Data &amp; Digital Analytics</div>
+        <p class="fr" style="font-size:13px;max-width:34ch">Data & digital analytics — collecte, consentement, modélisation et restitution.</p>
+        <p class="en" style="font-size:13px;max-width:34ch">Data & digital analytics — collection, consent, modelling and reporting.</p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="about.html"><span class="fr">À propos</span><span class="en">About</span></a></li>
+          <li><a href="expertise.html"><span class="fr">Expertises</span><span class="en">Expertise</span></a></li>
+          <li><a href="experience.html"><span class="fr">Parcours</span><span class="en">Experience</span></a></li>
+          <li><a href="work.html"><span class="fr">Réalisations</span><span class="en">Work</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="https://www.linkedin.com/in/julesbayer/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://github.com/jbaypro" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="copy"><span>© 2026 · Paris · <button type="button" class="cookie-link" onclick="openCookieSettings()"><span class="fr">Gestion des cookies</span><span class="en">Cookie settings</span></button></span><span class="fr">Site statique hébergé sur GitHub Pages</span><span class="en">Static site hosted on GitHub Pages</span></div>
+    </div>
+  </footer>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

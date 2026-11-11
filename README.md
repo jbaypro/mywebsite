@@ -1,69 +1,45 @@
-# Site vitrine — Jules Bayer
+# Site vitrine — Data & Digital Analytics
 
-Site statique, un seul fichier (`index.html`), bilingue FR/EN, sans dépendance serveur.
+Site statique multi-pages, bilingue FR/EN, hébergé sur GitHub Pages. Volontairement anonyme (ni nom, ni email, employeurs anonymisés) et non référencé.
 
-## Mise en ligne sur GitHub Pages (5 minutes)
+## Pages
 
-1. Sur github.com, créer un dépôt **public** nommé exactement `<ton-identifiant>.github.io`
-   (ex. `jules-bayer.github.io`). Ne pas cocher « Add a README ».
-2. Déposer les fichiers de ce dossier à la racine du dépôt :
-   - via l'interface web : *Add file → Upload files*, glisser `index.html`, `.nojekyll`, `README.md`, puis *Commit changes* ;
-   - ou en ligne de commande :
-     ```bash
-     git init
-     git add .
-     git commit -m "Site vitrine"
-     git branch -M main
-     git remote add origin https://github.com/<ton-identifiant>/<ton-identifiant>.github.io.git
-     git push -u origin main
-     ```
-3. Dans le dépôt : *Settings → Pages → Build and deployment* : Source = **Deploy from a branch**, Branch = **main** / **/ (root)**, *Save*.
-4. Attendre 1 à 2 minutes. Le site est en ligne sur `https://<ton-identifiant>.github.io`.
-   Chaque modification poussée sur `main` est redéployée automatiquement.
+| Fichier | Page | Particularité |
+| --- | --- | --- |
+| `index.html` | Accueil | fond animé « flux de données », fiche profil animée (une fois par session) ; redirige les anciens liens `index.html#about`… vers les vraies pages |
+| `about.html` | À propos | explosion de poudre blanche à l'ouverture |
+| `expertise.html` | Expertises | fond grille sobre |
+| `experience.html` | Parcours | fond grille sobre |
+| `work.html` | Réalisations | fond grille sobre |
+| `contact.html` | Contact | LinkedIn et GitHub uniquement |
 
-## Avant de publier
+Chaque page contient deux versions des textes : `<span class="fr">…</span>` et `<span class="en">…</span>`. Modifier les deux. Le header et le footer sont répétés dans chaque page : une modification du menu se fait dans les six fichiers.
 
-- Remplacer les placeholders en pointillés dans `index.html` (chercher `class="todo"`) : dates, nombre de comptes, email, LinkedIn.
-- Déposer ton CV sous le nom `CV_Jules_Bayer.pdf` à la racine : le bouton « Télécharger le CV » pointe dessus.
-- Les textes existent en deux versions : `<span class="fr">…</span>` et `<span class="en">…</span>`. Modifier les deux.
-
-## Nom de domaine (plus tard)
-
-1. Acheter le domaine (OVH, Gandi, Infomaniak…).
-2. Chez le registrar, ajouter un enregistrement **CNAME** : `www` → `<ton-identifiant>.github.io`,
-   et pour la racine quatre enregistrements **A** vers `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`.
-3. Dans *Settings → Pages → Custom domain*, saisir `www.tondomaine.fr`, cocher **Enforce HTTPS**.
-   GitHub crée alors un fichier `CNAME` dans le dépôt ; le laisser.
-
-## Tracking (optionnel)
-
-Coller l'extrait GTM dans `index.html` : la partie `<script>` juste après `<head>`, la partie `<noscript>` juste après `<body>`.
-Brancher la CMP via GTM avec Consent Mode v2 (defaults `denied`). Ne pas poser de tag avant consentement.
-
-## Fichiers
+## Fichiers partagés
 
 | Fichier | Rôle |
 | --- | --- |
-| `index.html` | Le site complet : HTML, CSS, JS, textes FR et EN |
-| `.nojekyll` | Indique à GitHub Pages de servir les fichiers tels quels (sans traitement Jekyll) |
-| `README.md` | Cette notice |
+| `assets/site.css` | styles de tout le site |
+| `assets/consent-default.js` | Consent Mode v2 : valeurs par défaut (tout « denied »), langue de la CMP |
+| `assets/cmp.js` | init tarteaucitron + service `ga4consent` |
+| `assets/site.js` | switch FR/EN (mémorisé), menu mobile, blocage de la page tant que la CMP n'a pas de réponse, suivi des clics de contact |
+| `assets/home.js` | accueil : fond animé + animation d'arrivée |
+| `assets/about.js` | à propos : explosion de poudre |
+| `tarteaucitron/` | CMP tarteaucitron 1.37.0 auto-hébergée (licence MIT) : script, services, langues FR/EN, CSS |
 
-## Consentement et tracking (en place)
+## Consentement et tracking
 
-- **CMP** : tarteaucitron 1.37.0, auto-hébergé dans `tarteaucitron/` (licence MIT, fichier `LICENSE`). Seuls les fichiers utiles sont embarqués : script minifié, services, langues FR/EN, CSS.
-- **Ordre dans le `<head>`** : 0) `gtag('consent','default', …)` tout « denied » (le seul défaut) → 1) tarteaucitron avec `googleConsentMode: false` (sinon il envoie un second défaut, tardif) et le service maison `ga4consent` → 2) GTM `GTM-PG57T4KN`. Ne pas changer cet ordre.
-- **Fenêtre de consentement** : centrée, page floutée, défilement et navigation bloqués (attribut `inert`) tant qu'aucun choix n'est fait. « Tout accepter » et « Tout refuser » ont le même poids visuel.
-- **Langue de la CMP** : toujours celle du site (langue enregistrée par le switch FR/EN, sinon celle du navigateur). Pendant la fenêtre de consentement, le header reste au-dessus du voile : le switch FR/EN y est actif et recharge la page dans la nouvelle langue ; le reste (menu, contenu, footer) est inerte. « Gestion des cookies » recharge aussi la page si la langue du site a changé depuis, puis rouvre le panneau.
-- **Mise à jour du consentement** : le service `ga4consent` envoie `gtag('consent','update',{analytics_storage})` **et** pousse `{event: 'cmp_consent_update', analytics_storage: 'granted' | 'denied'}`, une seule fois par changement réel : au clic (accepter / refuser, bannière ou panneau) et à chaque chargement si un choix est mémorisé. Rien n'est poussé tant que le visiteur n'a pas choisi.
-- **Événements dataLayer** poussés par le site :
-  - `virtual_page_view` (`page_id`, `page_location`, `page_title`) à chaque changement de page du menu (pas au premier chargement : le page_view GA4 le couvre) ;
+- **Ordre dans le `<head>` de chaque page** : 0) `assets/consent-default.js` (seul `consent default`) → 1) `tarteaucitron.min.js` puis `assets/cmp.js` (`googleConsentMode: false`, sinon tarteaucitron envoie un second défaut tardif) → 2) GTM `GTM-PG57T4KN`. Ne pas changer cet ordre.
+- **Fenêtre de consentement** : centrée, page floutée, défilement et navigation bloqués tant qu'aucun choix n'est fait. « Tout accepter » et « Tout refuser » ont le même poids visuel. Lien « Gestion des cookies » dans le footer.
+- **Langue de la CMP** : toujours celle du site. Pendant la fenêtre, le switch FR/EN du header reste actif et recharge la page dans la nouvelle langue.
+- **Événements dataLayer** :
+  - `cmp_consent_update` (`analytics_storage` : granted / denied) : au clic et à chaque chargement si un choix est mémorisé ; rien tant que le visiteur n'a pas choisi ;
   - `language_switch` (`language`) ;
-  - `contact_click` (`contact_method` : email / linkedin / github, `link_location` : footer / contact_page). L'adresse email n'est jamais envoyée.
-- Pour ajouter un service plus tard (Clarity, Hotjar…) : ajouter son fichier de service si besoin et `tarteaucitron.job.push('<service>')`.
+  - `contact_click` (`contact_method` : linkedin / github, `link_location` : footer / contact_page).
+- Chaque page est une vraie URL : le `page_view` GA4 standard suffit (plus de `virtual_page_view`).
 
 ## Non-référencement (volontaire)
 
-Le site ne doit pas apparaître dans les moteurs de recherche :
-- balises `<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">` (+ `googlebot`, `bingbot`) dans le `<head>` ;
-- **ne pas** ajouter de `robots.txt` qui bloquerait l'exploration : un robot qui ne peut pas lire la page ne voit pas le `noindex`, et l'URL peut alors être indexée sans contenu si un lien pointe vers elle ;
-- pas de sitemap, pas de propriété Search Console.
+- Balises `<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">` (+ `googlebot`, `bingbot`) dans chaque page.
+- **Ne pas** ajouter de `robots.txt` qui bloquerait l'exploration : un robot qui ne peut pas lire la page ne voit pas le `noindex`.
+- Pas de sitemap, pas de propriété Search Console.

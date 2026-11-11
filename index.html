@@ -218,6 +218,10 @@
   #tarteaucitronRoot #tarteaucitronPersonalize2{background:#fafafa !important;color:#000 !important}
   #tarteaucitronRoot #tarteaucitronAllDenied2{background:#fafafa !important;color:#000 !important}
   #tarteaucitronRoot #tarteaucitronCloseAlert{background:transparent !important;color:#a1a1aa !important;border:1px solid #2a2a2a !important}
+  #tarteaucitronRoot .tac-lang{position:absolute;top:14px;right:14px;display:inline-flex;border:1px solid #2a2a2a;border-radius:999px;padding:2px;background:#000}
+  #tarteaucitronRoot #tarteaucitronAlertBig .tac-lang button{all:unset;cursor:pointer;font-family:var(--font) !important;font-size:11px !important;font-weight:600;padding:3px 9px !important;margin:0 !important;border-radius:999px !important;color:#a1a1aa !important;background:transparent !important;line-height:1.4}
+  #tarteaucitronRoot #tarteaucitronAlertBig .tac-lang button[aria-pressed="true"]{background:#fafafa !important;color:#000 !important}
+  #tarteaucitronRoot .tac-lang button:focus-visible{outline:2px solid #fafafa;outline-offset:2px}
   .cookie-link{background:none;border:0;padding:0;font:inherit;color:var(--ink-3);cursor:pointer}
   .cookie-link:hover{color:var(--ink)}
   /* contact */
@@ -523,7 +527,7 @@
           <li><a href="https://github.com/jbaypro" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
       </div>
-      <div class="copy"><span>© 2026 Jules Bayer · Paris · <button type="button" class="cookie-link" onclick="tarteaucitron.userInterface.openPanel()"><span class="fr">Gestion des cookies</span><span class="en">Cookie settings</span></button></span><span class="fr">Site statique hébergé sur GitHub Pages</span><span class="en">Static site hosted on GitHub Pages</span></div>
+      <div class="copy"><span>© 2026 Jules Bayer · Paris · <button type="button" class="cookie-link" onclick="openCookieSettings()"><span class="fr">Gestion des cookies</span><span class="en">Cookie settings</span></button></span><span class="fr">Site statique hébergé sur GitHub Pages</span><span class="en">Static site hosted on GitHub Pages</span></div>
     </div>
   </footer>
 </div>
@@ -675,6 +679,41 @@
         });
       }
     };
+  })();
+
+  // Cookie banner language: tarteaucitron can't switch language live, so reload in the right one
+  function setCmpLangAndReload(l, openPanel){
+    try { localStorage.setItem('lang', l); if (openPanel) sessionStorage.setItem('tac_open', '1'); } catch (e) {}
+    location.reload();
+  }
+  window.openCookieSettings = function(){
+    const lang = document.documentElement.dataset.lang;
+    if (lang !== window.tarteaucitronForceLanguage) setCmpLangAndReload(lang, true);
+    else tarteaucitron.userInterface.openPanel();
+  };
+  (function cmpLangUi(){
+    let tries = 0;
+    const tick = () => {
+      const alert = document.getElementById('tarteaucitronAlertBig');
+      const ready = alert && window.tarteaucitron && tarteaucitron.userInterface;
+      if (!ready) { if (++tries < 100) setTimeout(tick, 100); return; }
+      // reopen the settings panel after a language reload
+      try { if (sessionStorage.getItem('tac_open')) { sessionStorage.removeItem('tac_open'); tarteaucitron.userInterface.openPanel(); } } catch (e) {}
+      // FR / EN switch inside the consent modal
+      if (!alert.querySelector('.tac-lang')) {
+        const cur = window.tarteaucitronForceLanguage;
+        const box = document.createElement('div');
+        box.className = 'tac-lang'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Langue / Language');
+        ['fr', 'en'].forEach(l => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.textContent = l.toUpperCase(); b.setAttribute('aria-pressed', String(l === cur));
+          b.addEventListener('click', () => { if (l !== cur) setCmpLangAndReload(l, false); });
+          box.appendChild(b);
+        });
+        alert.appendChild(box);
+      }
+    };
+    tick();
   })();
 
   // Cookie modal: block the page (mouse + keyboard) until a choice is made

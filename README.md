@@ -60,3 +60,10 @@ Brancher la CMP via GTM avec Consent Mode v2 (defaults `denied`). Ne pas poser d
   - `language_switch` (`language`) ;
   - `contact_click` (`contact_method` : email / linkedin / github, `link_location` : footer / contact_page). L'adresse email n'est jamais envoyée.
 - Pour ajouter un service plus tard (Clarity, Hotjar…) : ajouter son fichier de service si besoin et `tarteaucitron.job.push('<service>')`.
+
+## Non-référencement (volontaire)
+
+Le site ne doit pas apparaître dans les moteurs de recherche :
+- balises `<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">` (+ `googlebot`, `bingbot`) dans le `<head>` ;
+- **ne pas** ajouter de `robots.txt` qui bloquerait l'exploration : un robot qui ne peut pas lire la page ne voit pas le `noindex`, et l'URL peut alors être indexée sans contenu si un lien pointe vers elle ;
+- pas de sitemap, pas de propriété Search Console.

@@ -125,6 +125,30 @@
 
   h3.sub{font-size:20px;font-weight:500;margin:48px 0 16px}
   .langs{margin-top:20px;font-size:14px}
+  /* page backgrounds */
+  .site>main{position:relative}
+  .site>main>.view{position:relative;z-index:1}
+  #flow{position:absolute;left:0;top:0;width:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s ease}
+  body[data-page="home"] #flow{opacity:1}
+  #flow-mask{position:absolute;left:0;top:0;width:100%;z-index:0;pointer-events:none;background:radial-gradient(ellipse 34% 55% at 50% 45%,rgba(0,0,0,.85),rgba(0,0,0,0) 75%);display:none}
+  body[data-page="home"] #flow-mask{display:block}
+  .site>main::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .5s ease;
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:64px 64px;background-position:center top;
+    -webkit-mask-image:radial-gradient(ellipse 75% 55% at 50% 0%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse 75% 55% at 50% 0%,#000 25%,transparent 75%)}
+  .site>main::after{content:"";position:absolute;left:0;right:0;top:0;height:420px;z-index:0;pointer-events:none;opacity:0;transition:opacity .5s ease;
+    background:radial-gradient(ellipse 50% 70% at 50% 0%,rgba(255,255,255,.06),transparent 70%)}
+  body[data-page="expertises"] .site>main::before,body[data-page="parcours"] .site>main::before,body[data-page="realisations"] .site>main::before,body[data-page="contact"] .site>main::before,
+  body[data-page="expertises"] .site>main::after,body[data-page="parcours"] .site>main::after,body[data-page="realisations"] .site>main::after,body[data-page="contact"] .site>main::after{opacity:1}
+
+  /* about: white paint burst */
+  .about-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .splash{position:relative;aspect-ratio:1;width:100%;max-width:480px;justify-self:end;background:#000;filter:contrast(28);isolation:isolate}
+  .splash canvas{width:100%;height:100%;display:block;filter:blur(7px)}
+  .mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(56px,9vw,104px);font-weight:600;letter-spacing:-.04em;color:#000;opacity:0;transition:opacity .6s ease .55s;pointer-events:none}
+  .mono.on{opacity:1}
+  .splash-wrap{position:relative;justify-self:end;width:100%;max-width:480px}
+  @media (max-width:860px){.about-grid{grid-template-columns:1fr;gap:24px}.splash-wrap{justify-self:center;max-width:320px;order:-1}}
   /* contact */
   .contact p{font-size:20px;color:var(--ink);max-width:40ch}
   .links{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
@@ -187,6 +211,7 @@
   </header>
 
   <main>
+    <canvas id="flow" aria-hidden="true"></canvas><div id="flow-mask" aria-hidden="true"></div>
     <section class="view hero-view" id="home">
       <div class="hero">
         <span class="eyebrow"><i></i>Data & Digital Analytics · Paris</span>
@@ -201,7 +226,7 @@
         <div class="product">
           <div class="head"><b class="fr">Profil</b><b class="en">Profile</b><span class="fr">mis à jour novembre 2026</span><span class="en">updated November 2026</span></div>
           <div class="facts">
-        <div class="fact"><b>2+</b><span class="fr">années en data & digital analytics</span><span class="en">years in data & digital analytics</span></div>
+        <div class="fact"><b>3+</b><span class="fr">années en data & digital analytics</span><span class="en">years in data & digital analytics</span></div>
         <div class="fact"><b>22</b><span class="fr">langues trackées sur un même site</span><span class="en">languages tracked on a single site</span></div>
         <div class="fact"><b>2026</b><span class="fr">finaliste Piano Partner Awards</span><span class="en">Piano Partner Awards finalist</span></div>
       </div>
@@ -217,13 +242,21 @@
       </div>
     </section>
     <section class="view" id="about">
-      <h2 class="fr">À propos</h2><h2 class="en">About</h2>
+      <div class="about-grid">
+        <div>
+          <h2 class="fr">À propos</h2><h2 class="en">About</h2>
       <p class="fr">Consultant en digital analytics chez Havas Business Science, j'accompagne des marques dans la mesure et l'optimisation de leur performance digitale : de l'implémentation du tracking (GA4, GTM, Piano) à la modélisation des données (BigQuery, Python) et à la visualisation des KPIs (Looker Studio).</p>
       <p class="en">Digital analytics consultant at Havas Business Science, I help brands measure and improve their digital performance: from tracking implementation (GA4, GTM, Piano) to data modelling (BigQuery, Python) and KPI dashboards (Looker Studio).</p>
       <p class="fr">Ce qui m'anime : rendre une donnée marketing assez fiable pour qu'on puisse prendre une décision dessus — et le prouver, par exemple avec des tests d'incrémentalité plutôt que des corrélations.</p>
       <p class="en">What drives me: making marketing data trustworthy enough to act on — and proving it, with incrementality tests rather than correlations.</p>
       <p class="fr">Avant Havas, j'ai été data analyst et ingénieur big data chez Bouygues Telecom (pipelines PySpark et Airflow, supervision du trafic réseau), après des expériences de business analyst à Bruxelles et de data analyst à Paris.</p>
       <p class="en">Before Havas, I was a data analyst and big data engineer at Bouygues Telecom (PySpark and Airflow pipelines, network traffic monitoring), after roles as a business analyst in Brussels and a data analyst in Paris.</p>
+        </div>
+        <div class="splash-wrap" aria-hidden="true">
+          <div class="splash"><canvas id="paint"></canvas></div>
+          <div class="mono">JB</div>
+        </div>
+      </div>
     </section>
     <section class="view" id="expertises">
       <h2 class="fr">Expertises</h2><h2 class="en">Expertise</h2>
@@ -440,6 +473,116 @@
   if (!saved) saved = (navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
   setLang(saved);
 
+
+  // ---------- Home: data-flow graph ----------
+  const Flow = (() => {
+    const cv = document.getElementById('flow'), mask = document.getElementById('flow-mask'), ctx = cv.getContext('2d');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let W=0,H=0,raf=null,nodes=[],edges=[],pk=[],running=false,showLabels=true;
+    const L = {
+      fr:{site:'Site web',app:'App',crm:'CRM',ads:'Médias',gtm:'GTM',sgtm:'Server-side',bq:'BigQuery',clean:'Nettoyage',model:'Modèle',dash:'Dashboards',ga4:'GA4',dec:'Décisions'},
+      en:{site:'Website',app:'App',crm:'CRM',ads:'Media',gtm:'GTM',sgtm:'Server-side',bq:'BigQuery',clean:'Cleaning',model:'Model',dash:'Dashboards',ga4:'GA4',dec:'Decisions'}};
+    const layout = [['site',.05,.20],['app',.11,.40],['crm',.05,.60],['ads',.12,.80],['gtm',.22,.30],['sgtm',.23,.66],['bq',.50,.95],
+                    ['clean',.77,.32],['model',.78,.68],['dash',.94,.20],['ga4',.90,.46],['dec',.95,.76]];
+    const E = [['site','gtm'],['app','gtm'],['crm','sgtm'],['ads','sgtm'],['gtm','sgtm'],['gtm','bq'],['sgtm','bq'],['bq','clean'],['bq','model'],['clean','dash'],['clean','ga4'],['model','ga4'],['model','dec'],['dash','dec']];
+    function size(){
+      const main = cv.parentElement, card = document.querySelector('#home .product');
+      if (!card || !card.offsetParent) return;
+      const DPR = Math.min(2, devicePixelRatio||1);
+      W = main.clientWidth;
+      H = Math.max(360, card.getBoundingClientRect().top - main.getBoundingClientRect().top + 24);
+      cv.style.height = mask.style.height = H + 'px';
+      cv.width = W*DPR; cv.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+      showLabels = W >= 900;
+      const by = {};
+      nodes = layout.map(([id,x,y]) => (by[id] = {id, x:x*W, y:y*H}));
+      edges = E.map(([a,b]) => [by[a], by[b]]);
+    }
+    function point(a,b,t){ const mx=(a.x+b.x)/2,u=1-t; return [u*u*u*a.x+3*u*u*t*mx+3*u*t*t*mx+t*t*t*b.x, u*u*u*a.y+3*u*u*t*a.y+3*u*t*t*b.y+t*t*t*b.y]; }
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      ctx.lineWidth = 1;
+      for (const [a,b] of edges){ const mx=(a.x+b.x)/2; ctx.strokeStyle='rgba(161,161,170,.15)'; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.bezierCurveTo(mx,a.y,mx,b.y,b.x,b.y); ctx.stroke(); }
+      if (!reduce && Math.random() < .1) pk.push({e:edges[Math.floor(Math.random()*edges.length)], t:0, s:.005+Math.random()*.006});
+      for (let i=pk.length-1;i>=0;i--){
+        const p=pk[i]; p.t+=p.s; if (p.t>=1){ pk.splice(i,1); continue; }
+        const [x,y]=point(p.e[0],p.e[1],p.t), g=ctx.createRadialGradient(x,y,0,x,y,6);
+        g.addColorStop(0,'rgba(96,165,250,.85)'); g.addColorStop(1,'rgba(96,165,250,0)');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,6,0,7); ctx.fill();
+      }
+      const lab = L[document.documentElement.dataset.lang] || L.fr;
+      ctx.font='11px Inter, system-ui, sans-serif'; ctx.textAlign='center';
+      for (const n of nodes){
+        ctx.fillStyle='#0a0a0a'; ctx.strokeStyle='rgba(161,161,170,.38)'; ctx.beginPath(); ctx.arc(n.x,n.y,4.5,0,7); ctx.fill(); ctx.stroke();
+        if (showLabels){ ctx.fillStyle='rgba(161,161,170,.5)'; ctx.fillText(lab[n.id], n.x, n.y+20); }
+      }
+    }
+    function loop(){ draw(); raf = (running && !reduce && !document.hidden) ? requestAnimationFrame(loop) : null; }
+    addEventListener('resize', () => { if (running){ size(); if (!raf) loop(); } });
+    document.addEventListener('visibilitychange', () => { if (running && !document.hidden && !raf) loop(); });
+    return {
+      start(){ running = true; requestAnimationFrame(() => { size(); if (!raf) loop(); }); },
+      stop(){ running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+    };
+  })();
+
+  // ---------- About: white paint burst ----------
+  const Paint = (() => {
+    const cv = document.getElementById('paint'), ctx = cv.getContext('2d'), mono = document.querySelector('.mono');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let S=0, raf=null, shape=null;
+    function rnd(a,b){ return a + Math.random()*(b-a); }
+    function make(){
+      const arms = Array.from({length: 13}, (_,i) => {
+        const ang = i/13*Math.PI*2 + rnd(-.18,.18);
+        return { ang, len: rnd(.27,.37), w: rnd(.035,.06), drop: rnd(.016,.028), gap: rnd(.02,.05) };
+      });
+      const drops = Array.from({length: 46}, () => ({ ang: rnd(0,Math.PI*2), dist: rnd(.22,.42), r: rnd(.004,.014), delay: rnd(0,.25) }));
+      const lobes = Array.from({length: 7}, () => ({ ang: rnd(0,Math.PI*2), r: rnd(.06,.11), d: rnd(.08,.15) }));
+      return {arms, drops, lobes};
+    }
+    function size(){ const r = cv.getBoundingClientRect(), DPR = Math.min(2, devicePixelRatio||1); S = r.width; cv.width = cv.height = S*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+    const ease = t => 1 - Math.pow(1 - Math.max(0, Math.min(1, t)), 4);
+    function frame(t){
+      const c = S/2, k = S;
+      ctx.clearRect(0,0,S,S); ctx.fillStyle = '#fff';
+      const e = ease(Math.min(1,t));
+      // core + lobes
+      ctx.beginPath(); ctx.arc(c,c, k*.17*e, 0, 7); ctx.fill();
+      for (const l of shape.lobes){ ctx.beginPath(); ctx.arc(c+Math.cos(l.ang)*k*l.d*e, c+Math.sin(l.ang)*k*l.d*e, k*l.r*e, 0, 7); ctx.fill(); }
+      // arms: tapered chain of circles + detached droplet
+      for (const a of shape.arms){
+        const len = a.len*e, steps = 18;
+        for (let i=0;i<=steps;i++){
+          const f = i/steps, d = k*len*f, r = k*a.w*(1-f*.82)*Math.min(1,e*1.4);
+          ctx.beginPath(); ctx.arc(c+Math.cos(a.ang)*d, c+Math.sin(a.ang)*d, Math.max(.5,r), 0, 7); ctx.fill();
+        }
+        const dd = k*(len + a.gap*e);
+        ctx.beginPath(); ctx.arc(c+Math.cos(a.ang)*dd, c+Math.sin(a.ang)*dd, k*a.drop*e, 0, 7); ctx.fill();
+      }
+      // flying droplets
+      for (const d of shape.drops){
+        const p = ease(Math.max(0, Math.min(1, (t - d.delay) / (1 - d.delay))));
+        if (p <= 0) continue;
+        ctx.beginPath(); ctx.arc(c+Math.cos(d.ang)*k*d.dist*p, c+Math.sin(d.ang)*k*d.dist*p, k*d.r, 0, 7); ctx.fill();
+      }
+    }
+    return {
+      burst(){
+        requestAnimationFrame(() => {
+          size(); if (!S) return;
+          shape = make(); mono.classList.remove('on');
+          if (raf) cancelAnimationFrame(raf);
+          if (reduce){ frame(1); mono.classList.add('on'); return; }
+          const t0 = performance.now(), dur = 900;
+          const step = now => { const t = Math.max(0, (now - t0)/dur); frame(t); if (t < 1) raf = requestAnimationFrame(step); else raf = null; };
+          raf = requestAnimationFrame(step);
+          setTimeout(() => mono.classList.add('on'), 50);
+        });
+      }
+    };
+  })();
+
   // Page routing on hash
   const views = document.querySelectorAll('.view');
   const links = document.querySelectorAll('.top nav a');
@@ -453,7 +596,9 @@
     links.forEach(a => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + id));
     nav.classList.remove('open'); burger.setAttribute('aria-expanded','false');
     window.scrollTo({top:0, behavior:'auto'});
-    if (id === 'home') revealConsole();
+    document.body.dataset.page = id;
+    if (id === 'home') { revealConsole(); Flow.start(); } else Flow.stop();
+    if (id === 'about') Paint.burst();
   }
   burger.addEventListener('click', () => {
     const open = nav.classList.toggle('open'); burger.setAttribute('aria-expanded', String(open));

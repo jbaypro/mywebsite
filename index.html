@@ -30,7 +30,7 @@
     "bodyPosition": "bottom",
     "hashtag": "#tarteaucitron",
     "cookieName": "tarteaucitron",
-    "orientation": "bottom",
+    "orientation": "middle",
     "groupServices": false,
     "showDetailsOnClick": true,
     "serviceDefaultState": "wait",
@@ -209,14 +209,15 @@
   .splash canvas{position:absolute;left:-22%;top:-22%;width:144%;height:144%;display:block}
   .splash-wrap{position:relative;justify-self:end;width:100%;max-width:460px;margin-top:48px}
   @media (max-width:860px){.about-grid{grid-template-columns:1fr;gap:24px}.splash-wrap{justify-self:center;max-width:320px;order:-1}}
-  /* cookie banner (tarteaucitron) */
-  #tarteaucitronRoot #tarteaucitronAlertBig{background:#0a0a0a !important;border-top:1px solid #1f1f1f !important;color:#a1a1aa !important;font-family:var(--font) !important;font-size:14px !important;padding:18px 24px !important;box-shadow:0 -20px 40px rgba(0,0,0,.6) !important}
-  #tarteaucitronRoot #tarteaucitronAlertBig #tarteaucitronDisclaimerAlert{color:#a1a1aa !important;font-family:var(--font) !important;font-size:14px !important}
-  #tarteaucitronRoot #tarteaucitronAlertBig button{font-family:var(--font) !important;font-size:13px !important;border-radius:999px !important;padding:8px 16px !important;margin:6px 4px 0 !important}
+  /* cookie modal (tarteaucitron, centered + blocking until a choice is made) */
+  #tarteaucitronRoot.tarteaucitronBeforeVisible::before{content:"";position:fixed;inset:0;z-index:2147483640;background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  html:has(#tarteaucitronRoot.tarteaucitronBeforeVisible),body:has(#tarteaucitronRoot.tarteaucitronBeforeVisible){overflow:hidden}
+  #tarteaucitronRoot #tarteaucitronAlertBig{z-index:2147483645 !important;background:#0a0a0a !important;border:1px solid #2a2a2a !important;border-radius:16px !important;color:#a1a1aa !important;font-family:var(--font) !important;font-size:14px !important;padding:28px 28px 22px !important;box-shadow:0 40px 80px -20px rgba(0,0,0,.9) !important;max-width:min(520px,calc(100vw - 32px)) !important;box-sizing:border-box !important}
+  #tarteaucitronRoot #tarteaucitronAlertBig #tarteaucitronDisclaimerAlert{display:block;color:#d4d4d8 !important;font-family:var(--font) !important;font-size:15px !important;line-height:1.55 !important;margin-bottom:14px !important;text-align:left !important}
+  #tarteaucitronRoot #tarteaucitronAlertBig button{font-family:var(--font) !important;font-size:14px !important;border-radius:999px !important;padding:10px 18px !important;margin:6px 4px 0 !important}
   #tarteaucitronRoot #tarteaucitronPersonalize2{background:#fafafa !important;color:#000 !important}
-  #tarteaucitronRoot #tarteaucitronAllDenied2{background:transparent !important;color:#fafafa !important;border:1px solid #2a2a2a !important}
+  #tarteaucitronRoot #tarteaucitronAllDenied2{background:#fafafa !important;color:#000 !important}
   #tarteaucitronRoot #tarteaucitronCloseAlert{background:transparent !important;color:#a1a1aa !important;border:1px solid #2a2a2a !important}
-  #tarteaucitronRoot span[aria-hidden="true"].tarteaucitronCheck::before,#tarteaucitronRoot span[aria-hidden="true"].tarteaucitronCross::before{color:inherit}
   .cookie-link{background:none;border:0;padding:0;font:inherit;color:var(--ink-3);cursor:pointer}
   .cookie-link:hover{color:var(--ink)}
   /* contact */
@@ -674,6 +675,23 @@
         });
       }
     };
+  })();
+
+  // Cookie modal: block the page (mouse + keyboard) until a choice is made
+  (function lockUntilChoice(){
+    const site = document.querySelector('.site');
+    const apply = () => {
+      const root = document.getElementById('tarteaucitronRoot');
+      const open = !!(root && root.classList.contains('tarteaucitronBeforeVisible'));
+      if (open) site.setAttribute('inert', ''); else site.removeAttribute('inert');
+      return root;
+    };
+    const watch = () => {
+      const root = apply();
+      if (!root) return setTimeout(watch, 100);
+      new MutationObserver(apply).observe(root, { attributes: true, attributeFilter: ['class'] });
+    };
+    watch();
   })();
 
   // Contact clicks (method only, never the address itself)

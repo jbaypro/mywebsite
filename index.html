@@ -15,8 +15,8 @@
     wait_for_update: 800
   });
 </script>
-<!-- 1. Consentement : tarteaucitron 1.37.0 (auto-hébergé) avec Google Consent Mode v2.
-     Doit rester AVANT GTM : init() pose le consentement par défaut (tout « denied »). -->
+<!-- 1. Consentement : tarteaucitron 1.37.0 (auto-hébergé). Le défaut Consent Mode est posé au bloc 0 ;
+     tarteaucitron ne fait que les mises à jour via le service ga4consent. -->
 <script>
   var tarteaucitronForceLanguage = (function () {
     try { var l = localStorage.getItem('lang'); if (l === 'fr' || l === 'en') return l; } catch (e) {}
@@ -50,12 +50,37 @@
     "useExternalJs": false,
     "mandatory": true,
     "mandatoryCta": false,
-    "googleConsentMode": true,
+    "googleConsentMode": false,
     "bingConsentMode": false,
     "softConsentMode": false,
     "partnersList": false
   });
-  (tarteaucitron.job = tarteaucitron.job || []).push('gcmanalyticsstorage');
+  // Service maison : met à jour Consent Mode v2 ET pousse un événement dataLayer exploitable dans GTM.
+  // (googleConsentMode est désactivé pour éviter le second "consent default" envoyé tardivement par tarteaucitron.)
+  var tacLastConsent = null;
+  function tacConsent(state) {               // one update + one dataLayer event per real change
+    if (state === tacLastConsent) return;
+    tacLastConsent = state;
+    gtag('consent', 'update', { analytics_storage: state });
+    window.dataLayer.push({ event: 'cmp_consent_update', analytics_storage: state });
+  }
+  tarteaucitron.services.ga4consent = {
+    "key": "ga4consent",
+    "type": "analytic",
+    "name": "Google Analytics 4",
+    "uri": "https://policies.google.com/privacy",
+    "needConsent": true,
+    "cookies": ["_ga", "_gid", "_gat"],
+    "js": function () { tacConsent('granted'); },
+    "fallback": function () {
+      // also called while the visitor hasn't chosen yet ("wait"): only react to a stored refusal
+      var c = decodeURIComponent((document.cookie.match(/(?:^|; )tarteaucitron=([^;]*)/) || [])[1] || '');
+      if (/(^|!)ga4consent=false/.test(c)) tacConsent('denied');
+    }
+  };
+  // refusal clicked in the banner or the panel
+  document.addEventListener('ga4consent_disallowed', function () { tacConsent('denied'); });
+  (tarteaucitron.job = tarteaucitron.job || []).push('ga4consent');
 </script>
 <!-- 2. Google Tag Manager -->
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PG57T4KN"></script>

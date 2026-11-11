@@ -51,10 +51,10 @@ Brancher la CMP via GTM avec Consent Mode v2 (defaults `denied`). Ne pas poser d
 ## Consentement et tracking (en place)
 
 - **CMP** : tarteaucitron 1.37.0, auto-hébergé dans `tarteaucitron/` (licence MIT, fichier `LICENSE`). Seuls les fichiers utiles sont embarqués : script minifié, services, langues FR/EN, CSS.
-- **Ordre dans le `<head>`** : 0) `gtag('consent','default', …)` tout « denied » → 1) tarteaucitron (`googleConsentMode: true`, service `gcmanalyticsstorage`) → 2) GTM `GTM-PG57T4KN`. Ne pas changer cet ordre.
+- **Ordre dans le `<head>`** : 0) `gtag('consent','default', …)` tout « denied » (le seul défaut) → 1) tarteaucitron avec `googleConsentMode: false` (sinon il envoie un second défaut, tardif) et le service maison `ga4consent` → 2) GTM `GTM-PG57T4KN`. Ne pas changer cet ordre.
 - **Fenêtre de consentement** : centrée, page floutée, défilement et navigation bloqués (attribut `inert`) tant qu'aucun choix n'est fait. « Tout accepter » et « Tout refuser » ont le même poids visuel.
 - **Langue de la CMP** : toujours celle du site (langue enregistrée par le switch FR/EN, sinon celle du navigateur). Pendant la fenêtre de consentement, le header reste au-dessus du voile : le switch FR/EN y est actif et recharge la page dans la nouvelle langue ; le reste (menu, contenu, footer) est inerte. « Gestion des cookies » recharge aussi la page si la langue du site a changé depuis, puis rouvre le panneau.
-- **Mise à jour du consentement** : « Tout accepter » → `consent update {analytics_storage: 'granted'}` ; « Tout refuser » → reste `denied`. Lien « Gestion des cookies » dans le footer pour rouvrir le panneau.
+- **Mise à jour du consentement** : le service `ga4consent` envoie `gtag('consent','update',{analytics_storage})` **et** pousse `{event: 'cmp_consent_update', analytics_storage: 'granted' | 'denied'}`, une seule fois par changement réel : au clic (accepter / refuser, bannière ou panneau) et à chaque chargement si un choix est mémorisé. Rien n'est poussé tant que le visiteur n'a pas choisi.
 - **Événements dataLayer** poussés par le site :
   - `virtual_page_view` (`page_id`, `page_location`, `page_title`) à chaque changement de page du menu (pas au premier chargement : le page_view GA4 le couvre) ;
   - `language_switch` (`language`) ;

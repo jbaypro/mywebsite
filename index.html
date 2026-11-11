@@ -218,10 +218,7 @@
   #tarteaucitronRoot #tarteaucitronPersonalize2{background:#fafafa !important;color:#000 !important}
   #tarteaucitronRoot #tarteaucitronAllDenied2{background:#fafafa !important;color:#000 !important}
   #tarteaucitronRoot #tarteaucitronCloseAlert{background:transparent !important;color:#a1a1aa !important;border:1px solid #2a2a2a !important}
-  #tarteaucitronRoot .tac-lang{position:absolute;top:14px;right:14px;display:inline-flex;border:1px solid #2a2a2a;border-radius:999px;padding:2px;background:#000}
-  #tarteaucitronRoot #tarteaucitronAlertBig .tac-lang button{all:unset;cursor:pointer;font-family:var(--font) !important;font-size:11px !important;font-weight:600;padding:3px 9px !important;margin:0 !important;border-radius:999px !important;color:#a1a1aa !important;background:transparent !important;line-height:1.4}
-  #tarteaucitronRoot #tarteaucitronAlertBig .tac-lang button[aria-pressed="true"]{background:#fafafa !important;color:#000 !important}
-  #tarteaucitronRoot .tac-lang button:focus-visible{outline:2px solid #fafafa;outline-offset:2px}
+  .top.over-cmp{z-index:2147483646}
   .cookie-link{background:none;border:0;padding:0;font:inherit;color:var(--ink-3);cursor:pointer}
   .cookie-link:hover{color:var(--ink)}
   /* contact */
@@ -543,6 +540,8 @@
   }
   buttons.forEach(b => b.addEventListener('click', () => {
     setLang(b.dataset.set);
+    const tacRoot = document.getElementById('tarteaucitronRoot');
+    if (tacRoot && tacRoot.classList.contains('tarteaucitronBeforeVisible') && b.dataset.set !== window.tarteaucitronForceLanguage) { location.reload(); return; }
     window.dataLayer = window.dataLayer || [];
     dataLayer.push({ event: 'language_switch', language: b.dataset.set });
   }));
@@ -699,30 +698,19 @@
       if (!ready) { if (++tries < 100) setTimeout(tick, 100); return; }
       // reopen the settings panel after a language reload
       try { if (sessionStorage.getItem('tac_open')) { sessionStorage.removeItem('tac_open'); tarteaucitron.userInterface.openPanel(); } } catch (e) {}
-      // FR / EN switch inside the consent modal
-      if (!alert.querySelector('.tac-lang')) {
-        const cur = window.tarteaucitronForceLanguage;
-        const box = document.createElement('div');
-        box.className = 'tac-lang'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Langue / Language');
-        ['fr', 'en'].forEach(l => {
-          const b = document.createElement('button');
-          b.type = 'button'; b.textContent = l.toUpperCase(); b.setAttribute('aria-pressed', String(l === cur));
-          b.addEventListener('click', () => { if (l !== cur) setCmpLangAndReload(l, false); });
-          box.appendChild(b);
-        });
-        alert.appendChild(box);
-      }
     };
     tick();
   })();
 
   // Cookie modal: block the page (mouse + keyboard) until a choice is made
   (function lockUntilChoice(){
-    const site = document.querySelector('.site');
+    const header = document.querySelector('.top');
+    const blocked = () => [document.querySelector('main'), document.querySelector('footer'), header.querySelector('.brand'), header.querySelector('nav'), header.querySelector('.burger')];
     const apply = () => {
       const root = document.getElementById('tarteaucitronRoot');
       const open = !!(root && root.classList.contains('tarteaucitronBeforeVisible'));
-      if (open) site.setAttribute('inert', ''); else site.removeAttribute('inert');
+      blocked().forEach(el => el && (open ? el.setAttribute('inert', '') : el.removeAttribute('inert')));
+      header.classList.toggle('over-cmp', open);
       return root;
     };
     const watch = () => {
